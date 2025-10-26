@@ -180,6 +180,9 @@ export const connectionCardLines = useStorage<CONNECTIONS_TABLE_ACCESSOR_KEY[][]
   DETAILED_CARD_STYLE,
 )
 
+// highlight
+export const highlightConnectionRow = useStorage('config/highlight-connection-row', true)
+
 export const sourceIPLabelList = useStorage<SourceIPLabel[]>('config/source-ip-label-list', [])
 
 // rules

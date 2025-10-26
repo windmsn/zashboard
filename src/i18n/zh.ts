@@ -255,6 +255,7 @@ const zh: LANG_MESSAGE = {
   proxyChainExit: '代理链出口',
   nodeType: '节点类型',
   connectionCount: '连接数',
+  highlightConnectionRow: '高亮上传/下载行',
 }
 
 export default zh

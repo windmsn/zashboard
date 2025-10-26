@@ -72,6 +72,10 @@
             </option>
           </select>
         </div>
+        <div class="flex items-center gap-2">
+          <span class="whitespace-nowrap">{{ $t('highlightConnectionRow') }}</span>
+          <input type="checkbox" class="toggle toggle-sm" v-model="highlightConnectionRow" />
+        </div>
       </div>
       <div class="divider"></div>
       <SourceIPLabels />
@@ -82,5 +86,5 @@
 <script setup lang="ts">
 import SourceIPLabels from '@/components/settings/SourceIPLabels.vue'
 import { PROXY_CHAIN_DIRECTION, TABLE_SIZE, TABLE_WIDTH_MODE } from '@/constant'
-import { proxyChainDirection, tableSize, tableWidthMode, useConnectionCard } from '@/store/settings'
+import { proxyChainDirection, tableSize, tableWidthMode, useConnectionCard, highlightConnectionRow } from '@/store/settings'
 </script>

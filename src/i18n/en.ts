@@ -256,6 +256,7 @@ const en = {
   proxyChainExit: 'Proxy Chain Exit',
   nodeType: 'Node Type',
   connectionCount: 'Connection Count',
+  highlightConnectionRow: 'Highlight DL/UL Rows',
 }
 
 export type LANG_MESSAGE = typeof en

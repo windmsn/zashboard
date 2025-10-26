@@ -118,10 +118,13 @@
               transform: `translateY(${virtualRow.start - index * virtualRow.size}px)`,
             }"
             class="bg-base-100 hover:bg-primary! hover:text-primary-content"
-            :class="{
-              'cursor-pointer': !isDragging,
-              'cursor-grabbing': isDragging,
-            }"
+            :class="[
+              getLeafRowHighlightClass(rows[virtualRow.index]),
+              {
+                'cursor-pointer': !isDragging,
+                'cursor-grabbing': isDragging,
+              },
+            ]"
             @click="handlerClickRow(rows[virtualRow.index])"
           >
             <td
@@ -213,6 +216,7 @@ import { showNotification } from '@/helper/notification'
 import { getIPLabelFromMap } from '@/helper/sourceip'
 import { fromNow, prettyBytesHelper } from '@/helper/utils'
 import { connectionTabShow, renderConnections } from '@/store/connections'
+import { highlightConnectionRow } from '@/store/settings'
 import {
   connectionTableColumns,
   proxyChainDirection,
@@ -411,6 +415,13 @@ const columns: ColumnDef<Connection>[] = [
     id: CONNECTIONS_TABLE_ACCESSOR_KEY.DlSpeed,
     accessorFn: (original) => `${prettyBytesHelper(original.downloadSpeed)}/s`,
     sortingFn: (prev, next) => prev.original.downloadSpeed - next.original.downloadSpeed,
+    cell: ({ row }) => {
+      const conn = row.original as Connection | undefined
+      const value = conn?.downloadSpeed || 0
+      const text = `${prettyBytesHelper(value)}/s`
+      const cls = getSpeedColorClass(value, 'dl')
+      return h('span', { class: cls }, text)
+    },
   },
   {
     header: () => t(CONNECTIONS_TABLE_ACCESSOR_KEY.UlSpeed),
@@ -419,6 +430,13 @@ const columns: ColumnDef<Connection>[] = [
     id: CONNECTIONS_TABLE_ACCESSOR_KEY.UlSpeed,
     accessorFn: (original) => `${prettyBytesHelper(original.uploadSpeed)}/s`,
     sortingFn: (prev, next) => prev.original.uploadSpeed - next.original.uploadSpeed,
+    cell: ({ row }) => {
+      const conn = row.original as Connection | undefined
+      const value = conn?.uploadSpeed || 0
+      const text = `${prettyBytesHelper(value)}/s`
+      const cls = getSpeedColorClass(value, 'ul')
+      return h('span', { class: cls }, text)
+    },
   },
   {
     header: () => t(CONNECTIONS_TABLE_ACCESSOR_KEY.Download),
@@ -470,8 +488,8 @@ const columns: ColumnDef<Connection>[] = [
   },
 ]
 
-const grouping = ref<GroupingState>([])
-const expanded = ref<ExpandedState>({})
+const grouping = useStorage<GroupingState>('config/table-grouping', [])
+const expanded = useStorage<ExpandedState>('config/table-expanded', {})
 const sorting = useStorage<SortingState>('config/table-sorting', [])
 const columnPinning = useStorage<ColumnPinningState>('config/table-column-pinning', {
   left: [],
@@ -479,12 +497,14 @@ const columnPinning = useStorage<ColumnPinningState>('config/table-column-pinnin
 })
 
 const tanstackTable = useVueTable({
+  getRowId: (original) => original.id,
   get data() {
     return renderConnections.value
   },
   columns,
   columnResizeMode: 'onChange',
   columnResizeDirection: 'ltr',
+  autoResetExpanded: false,
   state: {
     get columnOrder() {
       return connectionTableColumns.value
@@ -531,6 +551,8 @@ const tanstackTable = useVueTable({
   onExpandedChange: (updater) => {
     if (isFunction(updater)) {
       expanded.value = updater(expanded.value)
+    } else {
+      expanded.value = updater
     }
   },
   onSortingChange: (updater) => {
@@ -655,6 +677,41 @@ const handleMouseUp = () => {
     }, 100)
   }
   isMouseDown.value = false
+}
+
+// 速度颜色：单位由浅至深（B/s、kB/s、MB/s）
+// 区分下载/上传：下载用绿色系，上传用红色系；加大 kB 与 MB 的对比度
+const getSpeedColorClass = (bytesPerSec: number, type: 'dl' | 'ul') => {
+  if (!highlightConnectionRow.value) return ''
+  if (!bytesPerSec) return ''
+  // 阈值：<1kB -> B/s；<1MB -> kB/s；>=1MB -> MB/s
+  const KB = 1024
+  const MB = 1024 * 1024
+  const palette = type === 'dl'
+    ? ['text-green-800', 'text-green-600', 'text-green-400']
+    : ['text-red-800', 'text-red-600', 'text-red-400']
+
+  if (bytesPerSec < KB) return palette[0]
+  if (bytesPerSec < MB) return palette[1]
+  return palette[2]
+}
+
+// 仅在叶子行（不可展开、具有 original 的连接）上高亮
+const getLeafRowHighlightClass = (row: Row<Connection>) => {
+  // 分组/聚合行：不高亮
+  if (row.getCanExpand && row.getCanExpand()) return ''
+  if ((row as any).getIsGrouped && (row as any).getIsGrouped()) return ''
+
+  const original = (row as Row<Connection> | undefined)?.original as Connection | undefined
+  if (!original) return ''
+
+  const dl = original.downloadSpeed || 0
+  const ul = original.uploadSpeed || 0
+
+  if (!highlightConnectionRow.value) return ''
+  if (dl > 0 && dl > ul) return '!bg-green-900/30 !text-base-content'
+  if (ul > 0 && ul > dl) return '!bg-red-900/30 !text-base-content'
+  return ''
 }
 
 // 复制功能
