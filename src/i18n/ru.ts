@@ -258,6 +258,7 @@ const ru: LANG_MESSAGE = {
   proxyChainExit: 'Выход из цепочки прокси',
   nodeType: 'Тип узла',
   connectionCount: 'Количество соединений',
+  highlightConnectionRow: 'Highlight DL/UL Rows',
 }
 
 export default ru

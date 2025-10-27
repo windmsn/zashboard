@@ -255,6 +255,7 @@ const zhTW: LANG_MESSAGE = {
   proxyChainExit: '代理鏈出口',
   nodeType: '節點類型',
   connectionCount: '連接數',
+  highlightConnectionRow: '高亮上传/下载行',
 }
 
 export default zhTW
