@@ -1,90 +1,139 @@
 <template>
   <!-- connections -->
-  <div class="card">
-    <div class="card-title px-4 pt-4">
+  <div
+    v-if="hasVisibleItems"
+    class="flex flex-col gap-2 p-4 text-sm"
+  >
+    <div class="settings-title">
       {{ $t('connections') }}
     </div>
-    <div class="card-body">
-      <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
-        <div class="flex items-center gap-2">
-          <span class="whitespace-nowrap">
-            {{ $t('connectionStyle') }}
-          </span>
-          <select
-            class="select select-sm min-w-24"
-            v-model="useConnectionCard"
-          >
-            <option :value="false">
-              {{ $t('table') }}
-            </option>
-            <option :value="true">
-              {{ $t('card') }}
-            </option>
-          </select>
+    <div class="settings-grid">
+      <div
+        v-if="!hiddenSettingsItems[`${SETTINGS_MENU_KEY.connections}.connectionStyle`]"
+        class="setting-item"
+      >
+        <div class="setting-item-label">
+          {{ $t('connectionStyle') }}
         </div>
-        <div class="flex items-center gap-2">
-          {{ $t('proxyChainDirection') }}
-          <select
-            class="select select-sm w-24"
-            v-model="proxyChainDirection"
-          >
-            <option
-              v-for="opt in Object.values(PROXY_CHAIN_DIRECTION)"
-              :key="opt"
-              :value="opt"
-            >
-              {{ $t(opt) }}
-            </option>
-          </select>
-        </div>
+        <select
+          class="select select-sm min-w-24"
+          v-model="useConnectionCard"
+        >
+          <option :value="false">
+            {{ $t('table') }}
+          </option>
+          <option :value="true">
+            {{ $t('card') }}
+          </option>
+        </select>
       </div>
       <div
-        class="grid grid-cols-1 gap-2 lg:grid-cols-2"
-        v-if="!useConnectionCard"
+        v-if="!hiddenSettingsItems[`${SETTINGS_MENU_KEY.connections}.proxyChainDirection`]"
+        class="setting-item"
       >
-        <div class="flex items-center gap-2">
-          <div>{{ $t('tableWidthMode') }}</div>
-          <select
-            class="select select-sm min-w-24"
-            v-model="tableWidthMode"
+        <div class="setting-item-label">
+          {{ $t('proxyChainDirection') }}
+        </div>
+        <select
+          class="select select-sm w-24"
+          v-model="proxyChainDirection"
+        >
+          <option
+            v-for="opt in Object.values(PROXY_CHAIN_DIRECTION)"
+            :key="opt"
+            :value="opt"
           >
-            <option
-              v-for="opt in Object.values(TABLE_WIDTH_MODE)"
-              :key="opt"
-              :value="opt"
-            >
-              {{ $t(opt) }}
-            </option>
-          </select>
-        </div>
-        <div class="flex items-center gap-2">
-          <div>{{ $t('tableSize') }}</div>
-          <select
-            class="select select-sm min-w-24"
-            v-model="tableSize"
-          >
-            <option
-              v-for="opt in Object.values(TABLE_SIZE)"
-              :key="opt"
-              :value="opt"
-            >
-              {{ $t(opt) }}
-            </option>
-          </select>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="whitespace-nowrap">{{ $t('highlightConnectionRow') }}</span>
-          <input type="checkbox" class="toggle toggle-sm" v-model="highlightConnectionRow" />
-        </div>
+            {{ $t(opt) }}
+          </option>
+        </select>
       </div>
-      <div class="divider"></div>
-      <SourceIPLabels />
+      <div class="flex items-center gap-2">
+        <span class="whitespace-nowrap">{{ $t('highlightConnectionRow') }}</span>
+        <input
+          type="checkbox"
+          class="toggle toggle-sm"
+          v-model="highlightConnectionRow"
+        />
+      </div>
     </div>
+    <div
+      v-if="!useConnectionCard"
+      class="settings-grid"
+    >
+      <div
+        v-if="!hiddenSettingsItems[`${SETTINGS_MENU_KEY.connections}.tableWidthMode`]"
+        class="setting-item"
+      >
+        <div class="setting-item-label">
+          {{ $t('tableWidthMode') }}
+        </div>
+        <select
+          class="select select-sm min-w-24"
+          v-model="tableWidthMode"
+        >
+          <option
+            v-for="opt in Object.values(TABLE_WIDTH_MODE)"
+            :key="opt"
+            :value="opt"
+          >
+            {{ $t(opt) }}
+          </option>
+        </select>
+      </div>
+      <div
+        v-if="!hiddenSettingsItems[`${SETTINGS_MENU_KEY.connections}.tableSize`]"
+        class="setting-item"
+      >
+        <div class="setting-item-label">
+          {{ $t('tableSize') }}
+        </div>
+        <select
+          class="select select-sm min-w-24"
+          v-model="tableSize"
+        >
+          <option
+            v-for="opt in Object.values(TABLE_SIZE)"
+            :key="opt"
+            :value="opt"
+          >
+            {{ $t(opt) }}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div
+      v-if="!hiddenSettingsItems[`${SETTINGS_MENU_KEY.connections}.sourceIPLabels`]"
+      class="divider"
+    ></div>
+    <SourceIPLabels
+      v-if="!hiddenSettingsItems[`${SETTINGS_MENU_KEY.connections}.sourceIPLabels`]"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import SourceIPLabels from '@/components/settings/SourceIPLabels.vue'
-import { PROXY_CHAIN_DIRECTION, TABLE_SIZE, TABLE_WIDTH_MODE } from '@/constant'
-import { proxyChainDirection, tableSize, tableWidthMode, useConnectionCard, highlightConnectionRow } from '@/store/settings'
+import { PROXY_CHAIN_DIRECTION, SETTINGS_MENU_KEY, TABLE_SIZE, TABLE_WIDTH_MODE } from '@/constant'
+import {
+  hiddenSettingsItems,
+  highlightConnectionRow,
+  proxyChainDirection,
+  tableSize,
+  tableWidthMode,
+  useConnectionCard,
+} from '@/store/settings'
+import { computed } from 'vue'
+
+// 检查是否有可见的子项
+const hasVisibleItems = computed(() => {
+  return (
+    !hiddenSettingsItems.value[`${SETTINGS_MENU_KEY.connections}.connectionStyle`] ||
+    !hiddenSettingsItems.value[`${SETTINGS_MENU_KEY.connections}.proxyChainDirection`] ||
+    (!useConnectionCard.value &&
+      !hiddenSettingsItems.value[`${SETTINGS_MENU_KEY.connections}.tableWidthMode`]) ||
+    (!useConnectionCard.value &&
+      !hiddenSettingsItems.value[`${SETTINGS_MENU_KEY.connections}.tableSize`]) ||
+    !hiddenSettingsItems.value[`${SETTINGS_MENU_KEY.connections}.sourceIPLabels`]
+  )
+})
 </script>

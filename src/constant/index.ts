@@ -173,12 +173,6 @@ export enum PROXY_TYPE {
   LoadBalance = 'loadbalance',
 }
 
-export enum PROXY_COUNT_MODE {
-  FILTERED_TOTAL = 'filteredTotal',
-  TOTAL = 'total',
-  ALIVE_TOTAL = 'aliveTotal',
-}
-
 export const SIMPLE_CARD_STYLE = [
   [CONNECTIONS_TABLE_ACCESSOR_KEY.Host, CONNECTIONS_TABLE_ACCESSOR_KEY.ConnectTime],
   [
@@ -284,4 +278,12 @@ export enum IP_INFO_API {
   IPSB = 'ip.sb',
   IPWHOIS = 'ipwho.is',
   IPAPI = 'ipapi.is',
+}
+
+export enum SETTINGS_MENU_KEY {
+  general = 'generalSettings',
+  backend = 'backendSettings',
+  proxies = 'proxySettings',
+  connections = 'connectionSettings',
+  overview = 'overviewSettings',
 }
