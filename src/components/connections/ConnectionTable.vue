@@ -216,9 +216,9 @@ import { showNotification } from '@/helper/notification'
 import { getIPLabelFromMap } from '@/helper/sourceip'
 import { fromNow, prettyBytesHelper } from '@/helper/utils'
 import { connectionTabShow, renderConnections } from '@/store/connections'
-import { highlightConnectionRow } from '@/store/settings'
 import {
   connectionTableColumns,
+  highlightConnectionRow,
   proxyChainDirection,
   tableSize,
   tableWidthMode,
@@ -257,9 +257,7 @@ import { twMerge } from 'tailwind-merge'
 import { computed, h, ref, type VNode } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ProxyName from '../proxies/ProxyName.vue'
-
 const { handlerInfo } = useConnections()
-
 const columnWidthMap = useStorage('config/table-column-width', {
   [CONNECTIONS_TABLE_ACCESSOR_KEY.Close]: 50,
   [CONNECTIONS_TABLE_ACCESSOR_KEY.Host]: 320,
@@ -687,9 +685,10 @@ const getSpeedColorClass = (bytesPerSec: number, type: 'dl' | 'ul') => {
   // 阈值：<1kB -> B/s；<1MB -> kB/s；>=1MB -> MB/s
   const KB = 1024
   const MB = 1024 * 1024
-  const palette = type === 'dl'
-    ? ['text-green-800', 'text-green-600', 'text-green-400']
-    : ['text-red-800', 'text-red-600', 'text-red-400']
+  const palette =
+    type === 'dl'
+      ? ['text-green-800', 'text-green-600', 'text-green-400']
+      : ['text-red-800', 'text-red-600', 'text-red-400']
 
   if (bytesPerSec < KB) return palette[0]
   if (bytesPerSec < MB) return palette[1]
@@ -697,12 +696,16 @@ const getSpeedColorClass = (bytesPerSec: number, type: 'dl' | 'ul') => {
 }
 
 // 仅在叶子行（不可展开、具有 original 的连接）上高亮
-const getLeafRowHighlightClass = (row: Row<Connection>) => {
+type GroupableRow<TData> = Row<TData> & {
+  getIsGrouped?: () => boolean
+}
+
+const getLeafRowHighlightClass = (row: GroupableRow<Connection>) => {
   // 分组/聚合行：不高亮
   if (row.getCanExpand && row.getCanExpand()) return ''
-  if ((row as any).getIsGrouped && (row as any).getIsGrouped()) return ''
+  if (row.getIsGrouped && row.getIsGrouped()) return ''
 
-  const original = (row as Row<Connection> | undefined)?.original as Connection | undefined
+  const original = row.original as Connection | undefined
   if (!original) return ''
 
   const dl = original.downloadSpeed || 0

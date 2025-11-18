@@ -30,40 +30,12 @@
       </ul>
       <template v-if="isSidebarCollapsed">
         <VerticalInfos v-if="showStatisticsWhenSidebarCollapsed">
-          <div class="flex w-full flex-col items-center justify-center gap-2">
-            <button
-              class="btn btn-circle btn-sm bg-base-300"
-              @click="showBackendSelectorDialog = true"
-              @mouseenter="(e) => showTip(e, t('selectBackend'), { placement: 'right' })"
-            >
-              <ServerIcon class="h-5 w-5" />
-            </button>
-            <button
-              class="btn btn-circle btn-sm bg-base-300"
-              @click="isSidebarCollapsed = false"
-            >
-              <ArrowRightCircleIcon class="h-5 w-5" />
-            </button>
-          </div>
+          <SidebarButtons vertical />
         </VerticalInfos>
-        <div
-          class="flex w-full flex-col items-center justify-center gap-2"
+        <SidebarButtons
           v-else
-        >
-          <button
-            class="btn btn-circle btn-sm bg-base-300"
-            @click="showBackendSelectorDialog = true"
-            @mouseenter="(e) => showTip(e, t('selectBackend'), { placement: 'right' })"
-          >
-            <ServerIcon class="h-5 w-5" />
-          </button>
-          <button
-            class="btn btn-circle btn-sm bg-base-300"
-            @click="isSidebarCollapsed = false"
-          >
-            <ArrowRightCircleIcon class="h-5 w-5" />
-          </button>
-        </div>
+          vertical
+        />
       </template>
       <template v-else>
         <OverviewCarousel v-if="route.name !== ROUTE_NAME.overview" />
@@ -91,12 +63,12 @@ import { renderRoutes } from '@/helper'
 import { useTooltip } from '@/helper/tooltip'
 import router from '@/router'
 import { isSidebarCollapsed, showStatisticsWhenSidebarCollapsed } from '@/store/settings'
-import { ArrowRightCircleIcon, ServerIcon } from '@heroicons/vue/24/outline'
 import { twMerge } from 'tailwind-merge'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import OverviewCarousel from './OverviewCarousel.vue'
+import SidebarButtons from './SidebarButtons.vue'
 import VerticalInfos from './VerticalInfos.vue'
 
 const { showTip } = useTooltip()
