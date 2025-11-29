@@ -208,13 +208,13 @@ export default defineComponent({
 
       const buttons = (
         <div class="flex items-center gap-2">
+          {settingsModal}
           <button
             class="btn btn-circle btn-sm"
             onClick={downloadAllLogs}
           >
             <ArrowDownTrayIcon class="h-4 w-4" />
           </button>
-          {settingsModal}
           <button
             class="btn btn-circle btn-sm"
             onClick={() => (isPaused.value = !isPaused.value)}
@@ -254,7 +254,7 @@ export default defineComponent({
         </div>
       )
 
-      return <div class="glass-panel ctrls-bar">{content}</div>
+      return <div class="ctrls-bar">{content}</div>
     }
   },
 })

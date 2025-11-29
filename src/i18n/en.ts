@@ -135,7 +135,6 @@ const en = {
   customBackgroundURL: 'Background',
   splitOverviewPage: 'Split overview page',
   manageHiddenGroup: 'Manage hidden groups',
-  showIPAndConnectionInfo: 'Show IP and connection info',
   transparent: 'Transparency',
   proxyGroupIconSize: 'Proxy group icon size',
   proxyGroupIconMargin: 'Proxy group icon margin',
@@ -167,6 +166,7 @@ const en = {
   searchMultiple: 'Space-separated keywords',
   importing: 'Importing...',
   hideConnection: 'Hide connection',
+  showConnection: 'Show connection',
   hideConnectionRegex: 'Hide connection regex',
   hideConnectionTip:
     'You can use case-insensitive regular expressions to match and hide unwanted connections.',
@@ -221,7 +221,6 @@ const en = {
     "When enabled, opening zashboard will close UDP connections that have been idle longer than the configured time. This may help with UDP connections that don't disconnect automatically as expected.",
   customGlobalNode: 'Custom GLOBAL node',
   connectionTopology: 'Connection topology',
-  displayConnectionTopology: 'Show connection topology',
   editBackend: 'Edit backend',
   editBackendTitle: 'Edit backend configuration',
   selectBackend: 'Select backend',
@@ -258,6 +257,12 @@ const en = {
   generalSettings: 'General Settings',
   overviewCard: 'Overview Card',
   overviewSettings: 'Overview Settings',
+  overviewCardSettings: 'Card Settings',
+  chartsCard: 'Charts Card',
+  networkCard: 'Network Card',
+  providerTrafficOverview: 'Provider Traffic Overview',
+  topologyCharts: 'Topology Charts',
+  connectionHistory: 'Connection History',
   latency: 'Latency',
   proxyStyle: 'Proxy style',
   icon: 'Icon',
@@ -278,6 +283,8 @@ const en = {
   clearConnectionHistoryConfirm:
     'Are you sure you want to clear all connection history data? This action cannot be undone.',
   clearConnectionHistorySuccess: 'Connection history data cleared successfully',
+  remainingTraffic: 'Remaining',
+  usedTraffic: 'Used',
 }
 
 export type LANG_MESSAGE = typeof en
