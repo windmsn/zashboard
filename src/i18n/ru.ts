@@ -42,8 +42,8 @@ const ru: LANG_MESSAGE = {
   process: 'Процесс',
   connectTime: 'Время',
   sourcePort: 'Исходный порт',
-  destination: 'Финальное назначение',
-  destinationType: 'Тип назначения',
+  destination: 'Разрешенный адрес',
+  destinationType: 'Тип разрешения',
   inboundUser: 'Входящий пользователь',
   dl: 'Загр',
   ul: 'Отдч',
@@ -173,6 +173,11 @@ const ru: LANG_MESSAGE = {
   hideConnectionRegex: 'Скрыть соединение Regex',
   hideConnectionTip:
     'Используйте регистронезависимое регулярное выражение, чтобы найти и скрыть нежелательные соединения.',
+  hideLog: 'Скрыть журнал',
+  showLog: 'Показать журнал',
+  hideLogRegex: 'Скрыть журнал Regex',
+  hideLogTip:
+    'Используйте регистронезависимое регулярное выражение, чтобы найти и скрыть нежелательные записи журнала.',
   loadBalance: 'Балансировка нагрузки',
   label: 'Метка',
   optional: 'Необязательно',

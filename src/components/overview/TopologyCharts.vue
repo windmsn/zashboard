@@ -24,21 +24,29 @@
           <div>{{ t('noData') }}</div>
         </div>
       </div>
-      <button
-        class=""
-        :class="
-          twMerge(
-            'btn btn-ghost btn-circle btn-sm absolute right-1 bottom-1',
-            isFullScreen ? 'fixed right-4 bottom-4 mb-[env(safe-area-inset-bottom)]' : '',
-          )
-        "
-        @click="isFullScreen = !isFullScreen"
+      <div
+        class="absolute right-1 bottom-1 flex flex-col gap-1"
+        :class="isFullScreen ? 'fixed right-4 bottom-4 mb-[env(safe-area-inset-bottom)]' : ''"
       >
-        <component
-          :is="isFullScreen ? ArrowsPointingInIcon : ArrowsPointingOutIcon"
-          class="h-4 w-4"
-        />
-      </button>
+        <button
+          class="btn btn-ghost btn-circle btn-sm"
+          @click="isPaused = !isPaused"
+        >
+          <component
+            :is="!isPaused ? PauseCircleIcon : PlayCircleIcon"
+            class="h-4 w-4"
+          />
+        </button>
+        <button
+          class="btn btn-ghost btn-circle btn-sm"
+          @click="isFullScreen = !isFullScreen"
+        >
+          <component
+            :is="isFullScreen ? ArrowsPointingInIcon : ArrowsPointingOutIcon"
+            class="h-4 w-4"
+          />
+        </button>
+      </div>
     </div>
   </div>
   <Teleport to="body">
@@ -53,12 +61,23 @@
         :class="shouldRotate ? 'bg-base-100' : 'bg-base-100 h-full w-full'"
         :style="fullChartStyle"
       />
-      <button
-        class="btn btn-ghost btn-circle btn-sm fixed right-4 bottom-4 mb-[env(safe-area-inset-bottom)]"
-        @click="isFullScreen = false"
-      >
-        <ArrowsPointingInIcon class="h-4 w-4" />
-      </button>
+      <div class="fixed right-4 bottom-4 mb-[env(safe-area-inset-bottom)] flex flex-col gap-1">
+        <button
+          class="btn btn-ghost btn-circle btn-sm"
+          @click="isPaused = !isPaused"
+        >
+          <component
+            :is="!isPaused ? PauseCircleIcon : PlayCircleIcon"
+            class="h-4 w-4"
+          />
+        </button>
+        <button
+          class="btn btn-ghost btn-circle btn-sm"
+          @click="isFullScreen = false"
+        >
+          <ArrowsPointingInIcon class="h-4 w-4" />
+        </button>
+      </div>
     </div>
   </Teleport>
 </template>
@@ -69,7 +88,12 @@ import { getIPLabelFromMap } from '@/helper/sourceip'
 import { isMiddleScreen } from '@/helper/utils'
 import { activeConnections } from '@/store/connections'
 import { blurIntensity, dashboardTransparent, font, theme } from '@/store/settings'
-import { ArrowsPointingInIcon, ArrowsPointingOutIcon } from '@heroicons/vue/24/outline'
+import {
+  ArrowsPointingInIcon,
+  ArrowsPointingOutIcon,
+  PauseCircleIcon,
+  PlayCircleIcon,
+} from '@heroicons/vue/24/outline'
 import { useElementSize, useWindowSize } from '@vueuse/core'
 import { SankeyChart } from 'echarts/charts'
 import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components'
@@ -84,6 +108,7 @@ echarts.use([SankeyChart, GridComponent, LegendComponent, TooltipComponent, Canv
 
 const { t } = useI18n()
 const isFullScreen = ref(false)
+const isPaused = ref(false)
 const colorRef = ref()
 const chart = ref()
 const fullScreenChart = ref()
@@ -182,17 +207,53 @@ const sankeyData = computed(() => {
     }
   })
 
-  const nodes = Array.from(nodeMap.entries()).map(([name, index]) => ({
+  // 创建初始节点数组
+  const initialNodes = Array.from(nodeMap.entries()).map(([name, index]) => ({
     id: index,
     name: name,
     nodeType: nodeTypeMap.get(name) || t('unknown'),
+    layer: layerMap.get(name) || 0,
     itemStyle: {
       color: layerColors[layerMap.get(name) || 0],
     },
   }))
 
+  // 按层分组节点
+  const nodesByLayer = new Map<number, typeof initialNodes>()
+  initialNodes.forEach((node) => {
+    const layer = node.layer
+    if (!nodesByLayer.has(layer)) {
+      nodesByLayer.set(layer, [])
+    }
+    nodesByLayer.get(layer)!.push(node)
+  })
+
+  // 对每一层的节点按名称进行字典排序
+  const sortedLayers = Array.from(nodesByLayer.keys()).sort((a, b) => a - b)
+  const idMapping = new Map<number, number>() // 旧 id -> 新 id 映射
+  const sortedNodes: typeof initialNodes = []
+  let newId = 0
+
+  sortedLayers.forEach((layer) => {
+    const layerNodes = nodesByLayer.get(layer)!
+    // 对当前层的节点按名称进行字典排序
+    layerNodes.sort((a, b) => a.name.localeCompare(b.name))
+    // 重新分配 id
+    layerNodes.forEach((node) => {
+      idMapping.set(node.id, newId)
+      sortedNodes.push({
+        ...node,
+        id: newId,
+      })
+      newId++
+    })
+  })
+
+  // 更新 links 中的 source 和 target 引用
   const links = Array.from(linkMap.entries()).map(([link, value]) => {
-    const [source, target] = link.split('-').map(Number)
+    const [oldSource, oldTarget] = link.split('-').map(Number)
+    const source = idMapping.get(oldSource)!
+    const target = idMapping.get(oldTarget)!
     // 使用对数缩放来压缩数据范围，使小值更明显
     // 公式: log10(value + 1) * 10，确保最小值为0，同时保持相对大小关系
     const scaledValue = Math.log10(value + 1) * 10
@@ -204,7 +265,7 @@ const sankeyData = computed(() => {
     }
   })
 
-  return { nodes, links }
+  return { nodes: sortedNodes, links }
 })
 
 const layerColors = ['#6a6fc5', '#a8d4a0', '#fddb8a', '#f2a0a0']
@@ -257,22 +318,22 @@ const options = computed(() => ({
       data: sankeyData.value.nodes,
       links: sankeyData.value.links,
       emphasis: {
-        focus: 'adjacency',
+        focus: 'trajectory',
       },
       lineStyle: {
         color: 'gradient',
         curveness: 0.5,
       },
       itemStyle: {
-        borderWidth: 1,
-        borderColor: colorSet.baseContent30,
+        borderWidth: 0,
       },
       label: {
         color: colorSet.baseContent,
-        fontSize: 12,
+        fontSize: isMiddleScreen.value ? 10 : 12,
         formatter: (params: { name: string }) => {
           const name = params.name
-          return name.length > 25 ? name.substring(0, 25) + '...' : name
+          const length = isFullScreen.value ? 45 : isMiddleScreen.value ? 20 : 30
+          return name.length > length ? name.substring(0, length) + '...' : name
         },
       },
       nodeGap: 4,
@@ -297,7 +358,19 @@ onMounted(() => {
 
   myChart.setOption(options.value)
 
+  // 监听 tooltip 显示和隐藏事件
+  myChart.on('showTip', () => {
+    isPaused.value = true
+  })
+  myChart.on('hideTip', () => {
+    isPaused.value = false
+  })
+
   const updateChartData = debounce((newData: typeof sankeyData.value) => {
+    if (isPaused.value) {
+      return
+    }
+
     if (myChart && newData.nodes.length > 0) {
       myChart.setOption(options.value)
     } else if (myChart && newData.nodes.length === 0) {
@@ -308,6 +381,13 @@ onMounted(() => {
       nextTick(() => {
         if (!fullScreenMyChart.value) {
           fullScreenMyChart.value = echarts.init(fullScreenChart.value)
+          // 为全屏图表也添加事件监听
+          fullScreenMyChart.value.on('showTip', () => {
+            isPaused.value = true
+          })
+          fullScreenMyChart.value.on('hideTip', () => {
+            isPaused.value = false
+          })
         }
         if (fullScreenMyChart.value && newData.nodes.length > 0) {
           fullScreenMyChart.value.setOption(options.value)
@@ -334,6 +414,13 @@ onMounted(() => {
       nextTick(() => {
         if (!fullScreenMyChart.value) {
           fullScreenMyChart.value = echarts.init(fullScreenChart.value)
+          // 为全屏图表也添加事件监听
+          fullScreenMyChart.value.on('showTip', () => {
+            isPaused.value = true
+          })
+          fullScreenMyChart.value.on('hideTip', () => {
+            isPaused.value = false
+          })
         }
         if (fullScreenMyChart.value && sankeyData.value.nodes.length > 0) {
           fullScreenMyChart.value.setOption(options.value)
