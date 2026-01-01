@@ -15,11 +15,7 @@
   >
     <div :style="{ height: `${totalSize}px` }">
       <table
-        :class="[
-          'table-zebra table rounded-none shadow-md',
-          sizeOfTable,
-          isManualTable && 'table-fixed',
-        ]"
+        :class="['table rounded-none shadow-md', sizeOfTable, isManualTable && 'table-fixed']"
         :style="
           isManualTable && {
             width: `${tanstackTable.getCenterTotalSize()}px`,
