@@ -24,6 +24,12 @@
           :data-key="item.key"
           class="card"
         >
+          <div
+            class="settings-title mt-4 px-4"
+            v-if="![SETTINGS_MENU_KEY.general, SETTINGS_MENU_KEY.backend].includes(item.key)"
+          >
+            {{ $t(item.label) }}
+          </div>
           <component :is="item.component" />
         </div>
       </div>
@@ -39,8 +45,9 @@ import OverviewSettings from '@/components/settings/OverviewSettings.vue'
 import ProxiesSettings from '@/components/settings/ProxiesSettings.vue'
 import SettingsMenu from '@/components/settings/SettingsMenu.vue'
 import { usePaddingForViews } from '@/composables/paddingViews'
+import { isSettingVisible } from '@/composables/settings'
 import { SETTINGS_MENU_KEY } from '@/constant'
-import { hiddenSettingsItems, settingsMenuOrder } from '@/store/settings'
+import { settingsMenuOrder } from '@/store/settings'
 import {
   ArrowsRightLeftIcon,
   CubeTransparentIcon,
@@ -117,7 +124,7 @@ const menuItems = computed<MenuItem[]>(() => {
   // 根据 settingsMenuOrder 排序，并过滤隐藏的项
   return settingsMenuOrder.value
     .map((key) => itemsMap.get(key))
-    .filter((item): item is MenuItem => item !== undefined && !hiddenSettingsItems.value[item.key])
+    .filter((item): item is MenuItem => item !== undefined && isSettingVisible(item.key))
 })
 const activeMenuKey = ref<SETTINGS_MENU_KEY>(menuItems.value[0]?.key || SETTINGS_MENU_KEY.general)
 
