@@ -49,7 +49,7 @@ axios.interceptors.response.use(
 
       showNotification({
         key: errorMessage,
-        content: `${error.config?.url} \n${errorMessage}`,
+        content: `${decodeURIComponent(error.config?.url || '')} \n${errorMessage}`,
         type: 'alert-error',
       })
       return Promise.reject(error)
@@ -77,7 +77,7 @@ export const mihomo = computed<[MIHOMO, string] | undefined>(() => {
       case 'meta':
         return [MIHOMO.Meta, match[2] ?? version.value]
       default:
-        return undefined
+        return [MIHOMO.Meta, version.value]
     }
   }
 })

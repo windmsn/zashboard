@@ -4,7 +4,7 @@
     :style="padding"
   >
     <OverviewCtrl />
-    <div class="flex flex-col gap-1 p-2">
+    <div class="flex flex-col gap-3 p-3">
       <component
         v-for="item in visibleCards"
         :key="item"
@@ -15,13 +15,13 @@
 </template>
 
 <script setup lang="ts">
+import OverviewCtrl from '@/components/controls/OverviewCtrl.vue'
 import ChartsCard from '@/components/overview/ChartsCard.vue'
 import ConnectionHistory from '@/components/overview/ConnectionHistory.vue'
 import NetworkCard from '@/components/overview/NetworkCard.vue'
 import ProviderTrafficOverview from '@/components/overview/ProviderTrafficOverview.vue'
 import RuleHitCountCard from '@/components/overview/RuleHitCountCard.vue'
 import TopologyCharts from '@/components/overview/TopologyCharts.vue'
-import OverviewCtrl from '@/components/sidebar/OverviewCtrl.vue'
 import { usePaddingForViews } from '@/composables/paddingViews'
 import { overviewCardOrder } from '@/store/settings'
 import type { Component } from 'vue'

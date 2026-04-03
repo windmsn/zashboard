@@ -1,4 +1,6 @@
+import { SETTINGS_CATEGORIES } from '@/config/settingsItems'
 import {
+  ALL_THEME,
   CONNECTIONS_TABLE_ACCESSOR_KEY,
   DETAILED_CARD_STYLE,
   EMOJIS,
@@ -23,6 +25,24 @@ import type { SourceIPLabel } from '@/types'
 import { useStorage } from '@vueuse/core'
 import { computed } from 'vue'
 
+const migrateLegacyStorageKey = (legacyKey: string, nextKey: string) => {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  const legacyValue = localStorage.getItem(legacyKey)
+  const nextValue = localStorage.getItem(nextKey)
+
+  if (legacyValue !== null && nextValue === null) {
+    localStorage.setItem(nextKey, legacyValue)
+  }
+  localStorage.removeItem(legacyKey)
+}
+
+migrateLegacyStorageKey('config/show-seleted-for-now-node', 'config/show-selected-for-now-node')
+migrateLegacyStorageKey('config/use-connecticon-card', 'config/use-connection-card')
+migrateLegacyStorageKey('config/connecticon-table-size', 'config/connection-table-size')
+
 // global
 export const defaultTheme = useStorage<string>('config/default-theme', 'light')
 export const darkTheme = useStorage<string>('config/dark-theme', 'dark')
@@ -33,8 +53,20 @@ export const theme = computed(() => {
   }
   return defaultTheme.value
 })
-
 export const customThemes = useStorage<THEME[]>('config/custom-themes', [])
+
+const replaceLegacyTheme = (theme: string, defaultTheme: string) => {
+  if (theme === 'dark-apple') {
+    return 'dark'
+  }
+  if ([...ALL_THEME, ...customThemes.value.map((theme) => theme.name)].includes(theme)) {
+    return theme
+  }
+  return defaultTheme
+}
+
+defaultTheme.value = replaceLegacyTheme(defaultTheme.value, 'light')
+darkTheme.value = replaceLegacyTheme(darkTheme.value, 'dark')
 
 export const language = useStorage<LANG>(
   'config/language',
@@ -74,7 +106,7 @@ export const emoji = useStorage<EMOJIS>(
 )
 export const customBackgroundURL = useStorage('config/custom-background-image', '')
 export const dashboardTransparent = useStorage('config/dashboard-transparent', 90)
-export const autoUpgrade = useStorage('config/auto-upgrade', false)
+export const autoUpgradeDashboard = useStorage('config/auto-upgrade', false)
 export const checkUpgradeCore = useStorage('config/check-upgrade-core', true)
 export const autoUpgradeCore = useStorage('config/auto-upgrade-core', false)
 export const swipeInPages = useStorage('config/swipe-in-pages', true)
@@ -109,11 +141,11 @@ const defaultOverviewCardOrder: { card: OVERVIEW_CARD; visible: boolean }[] = [
     visible: true,
   },
   {
-    card: OVERVIEW_CARD.ProviderTrafficOverview,
+    card: OVERVIEW_CARD.TopologyCharts,
     visible: true,
   },
   {
-    card: OVERVIEW_CARD.TopologyCharts,
+    card: OVERVIEW_CARD.ProviderTrafficOverview,
     visible: true,
   },
   {
@@ -146,7 +178,7 @@ if (missingCards.length > 0) {
 
 // proxies
 export const collapseGroupMap = useStorage<Record<string, boolean>>('config/collapse-group-map', {})
-export const displayFinalOutbound = useStorage('config/show-seleted-for-now-node', false)
+export const displayFinalOutbound = useStorage('config/show-selected-for-now-node', false)
 export const twoColumnProxyGroup = useStorage('config/two-columns', true)
 export const speedtestUrl = useStorage<string>('config/speedtest-url', TEST_URL)
 export const independentLatencyTest = useStorage('config/independent-latency-test', false)
@@ -195,13 +227,13 @@ export const groupTestUrls = useStorage<
 >('config/group-test-urls', [])
 
 // connections
-export const useConnectionCard = useStorage('config/use-connecticon-card', window.innerWidth < 640)
+export const useConnectionCard = useStorage('config/use-connection-card', window.innerWidth < 640)
 export const proxyChainDirection = useStorage(
   'config/proxy-chain-direction',
   PROXY_CHAIN_DIRECTION.NORMAL,
 )
 export const showFullProxyChain = useStorage('config/show-full-proxy-chain', true)
-export const tableSize = useStorage<TABLE_SIZE>('config/connecticon-table-size', TABLE_SIZE.SMALL)
+export const tableSize = useStorage<TABLE_SIZE>('config/connection-table-size', TABLE_SIZE.LARGE)
 export const tableWidthMode = useStorage('config/table-width-mode', TABLE_WIDTH_MODE.AUTO)
 export const connectionTableColumns = useStorage<CONNECTIONS_TABLE_ACCESSOR_KEY[]>(
   'config/connection-table-columns',
@@ -247,10 +279,7 @@ export const hiddenSettingsItems = useStorage<Record<string, boolean>>(
 
 // settings menu order
 // 存储设置菜单项的顺序
-export const settingsMenuOrder = useStorage<SETTINGS_MENU_KEY[]>('config/settings-menu-order', [
-  SETTINGS_MENU_KEY.general,
-  SETTINGS_MENU_KEY.overview,
-  SETTINGS_MENU_KEY.backend,
-  SETTINGS_MENU_KEY.proxies,
-  SETTINGS_MENU_KEY.connections,
-])
+export const settingsMenuOrder = useStorage<SETTINGS_MENU_KEY[]>(
+  'config/settings-menu-order',
+  SETTINGS_CATEGORIES.map((category) => category.key),
+)

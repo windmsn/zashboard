@@ -1,7 +1,7 @@
 <template>
   <div
     ref="parentRef"
-    class="h-full overflow-auto p-2"
+    class="base-container m-3 h-full overflow-auto backdrop-blur-none!"
     :class="{
       'select-none': isDragging,
     }"
@@ -15,14 +15,16 @@
   >
     <div :style="{ height: `${totalSize}px` }">
       <table
-        :class="['table rounded-none shadow-md', sizeOfTable, isManualTable && 'table-fixed']"
+        :class="['table', sizeOfTable, isManualTable && 'table-fixed']"
         :style="
           isManualTable && {
             width: `${tanstackTable.getCenterTotalSize()}px`,
           }
         "
       >
-        <thead class="bg-base-100 sticky -top-2 z-10">
+        <thead
+          class="bg-base-100 border-base-300/60 sticky top-0 z-10 border-b backdrop-blur-none!"
+        >
           <tr
             v-for="headerGroup in tanstackTable.getHeaderGroups()"
             :key="headerGroup.id"
@@ -33,16 +35,17 @@
               :colSpan="header.colSpan"
               class="relative"
               :class="[
-                header.column.getCanSort() ? 'cursor-pointer select-none' : '',
-                header.column.getIsPinned && header.column.getIsPinned() === 'left'
-                  ? 'pinned-td bg-base-100 sticky -left-2 z-20'
-                  : '',
+                inheritedStyle,
+                header.column.getCanSort() && 'cursor-pointer select-none',
+                header.column.getIsPinned &&
+                  header.column.getIsPinned() === 'left' &&
+                  'pinned-td sticky left-0 z-20',
               ]"
-              :style="
+              :style="[
                 isManualTable && {
                   width: `${header.getSize()}px`,
-                }
-              "
+                },
+              ]"
               @click="header.column.getToggleSortingHandler()?.($event)"
             >
               <div class="flex items-center gap-1">
@@ -113,13 +116,10 @@
               height: `${virtualRow.size}px`,
               transform: `translateY(${virtualRow.start - index * virtualRow.size}px)`,
             }"
-            class="bg-base-100 hover:bg-primary! hover:text-primary-content"
+            class="hover:bg-primary! hover:text-primary-content!"
             :class="[
-              getLeafRowHighlightClass(rows[virtualRow.index]),
-              {
-                'cursor-pointer': !isDragging,
-                'cursor-grabbing': isDragging,
-              },
+              virtualRow.index % 2 === 0 ? 'bg-base-150' : 'bg-base-100',
+              !isDragging ? 'cursor-pointer' : 'cursor-grabbing',
             ]"
             @click="handlerClickRow(rows[virtualRow.index])"
           >
@@ -145,9 +145,9 @@
                       ].includes(cell.column.id as CONNECTIONS_TABLE_ACCESSOR_KEY) &&
                         'max-w-xl truncate',
                     ),
-                cell.column.getIsPinned && cell.column.getIsPinned() === 'left'
-                  ? 'pinned-td sticky -left-2 z-20 bg-inherit shadow-md'
-                  : '',
+                cell.column.getIsPinned &&
+                  cell.column.getIsPinned() === 'left' &&
+                  `pinned-td sticky left-0 z-20 ${inheritedStyle}`,
               ]"
               @contextmenu="handleCellRightClick($event, cell)"
             >
@@ -208,6 +208,7 @@ import {
   getNetworkTypeFromConnection,
   getProcessFromConnection,
 } from '@/helper'
+import { backgroundImage } from '@/helper/indexeddb'
 import { showNotification } from '@/helper/notification'
 import { getIPLabelFromMap } from '@/helper/sourceip'
 import { fromNow, prettyBytesHelper } from '@/helper/utils'
@@ -612,6 +613,16 @@ const sizeOfTable = computed(() => {
   return classMap[tableSize.value]
 })
 
+const inheritedStyle = computed(() => {
+  const baseStyle = 'bg-inherit'
+
+  if (!backgroundImage.value) {
+    return baseStyle
+  }
+
+  return `${baseStyle} backdrop-blur-sm`
+})
+
 const handlerClickRow = (row: Row<Connection>) => {
   if (isDragging.value) return
 
@@ -698,28 +709,6 @@ const getSpeedColorClass = (bytesPerSec: number, type: 'dl' | 'ul') => {
   return palette[2]
 }
 
-// 仅在叶子行（不可展开、具有 original 的连接）上高亮
-type GroupableRow<TData> = Row<TData> & {
-  getIsGrouped?: () => boolean
-}
-
-const getLeafRowHighlightClass = (row: GroupableRow<Connection>) => {
-  // 分组/聚合行：不高亮
-  if (row.getCanExpand && row.getCanExpand()) return ''
-  if (row.getIsGrouped && row.getIsGrouped()) return ''
-
-  const original = row.original as Connection | undefined
-  if (!original) return ''
-
-  const dl = original.downloadSpeed || 0
-  const ul = original.uploadSpeed || 0
-
-  if (!highlightConnectionRow.value) return ''
-  if (dl > 0 && dl > ul) return '!bg-green-900/30 !text-base-content'
-  if (ul > 0 && ul > dl) return '!bg-red-900/30 !text-base-content'
-  return ''
-}
-
 // 复制功能
 const copyToClipboard = async (text: string) => {
   try {
@@ -763,7 +752,7 @@ const handleCellRightClick = (
 }
 </script>
 
-<style>
+<style scoped>
 th .resizer {
   @apply opacity-0;
 }
