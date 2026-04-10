@@ -1,7 +1,9 @@
 <template>
   <div
-    class="sidebar border-base-300/30 bg-base-200 text-base-content scrollbar-hidden h-full overflow-x-hidden border-r p-2 transition-all"
+    ref="sidebarRef"
+    class="sidebar border-base-300/30 bg-base-200 text-base-content scrollbar-hidden h-full overflow-x-hidden border-r p-2 transition-[width,padding] duration-320 ease-[cubic-bezier(0.34,0.1,0.2,1)]"
     :class="isSidebarCollapsed ? 'w-18 px-0' : 'w-64'"
+    @transitionend="handleTransitionEnd"
   >
     <div :class="twMerge('flex h-full flex-col gap-2', isSidebarCollapsed ? 'w-18 px-0' : 'w-60')">
       <ul class="menu w-full flex-1">
@@ -69,6 +71,11 @@ import OverviewCarousel from './OverviewCarousel.vue'
 import SidebarButtons from './SidebarButtons.vue'
 import VerticalInfos from './VerticalInfos.vue'
 
+const emit = defineEmits<{
+  transitionend: []
+}>()
+
+const sidebarRef = ref<HTMLDivElement>()
 const { showTip } = useTooltip()
 const { t } = useI18n()
 
@@ -82,4 +89,9 @@ const mouseenterHandler = (e: MouseEvent, r: string) => {
 }
 
 const route = useRoute()
+
+const handleTransitionEnd = (e: TransitionEvent) => {
+  if (e.target !== sidebarRef.value || e.propertyName !== 'width') return
+  emit('transitionend')
+}
 </script>
