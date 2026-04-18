@@ -28,6 +28,7 @@ const zhTW: LANG_MESSAGE = {
   flushDNSCache: '清空DNS快取',
   flushDNSCacheSuccess: 'DNS快取清空成功',
   flushFakeIPSuccess: 'Fake IP清空成功',
+  flushSmartWeightsSuccess: 'Smart權重清空成功',
   restartCoreSuccess: '核心重啟成功',
   reloadConfigsSuccess: '配置重載成功',
   updateGeoSuccess: 'GEO資料庫更新成功',
@@ -97,6 +98,7 @@ const zhTW: LANG_MESSAGE = {
   updateGeoDatabase: '更新GEO',
   tunMode: 'Tun 模式',
   truncateProxyName: '截斷節點名稱',
+  disableProxiesPageTextSelect: '禁用代理頁文字選取',
   sourceIPLabels: '源IP標籤',
   proxyPreviewType: '節點預覽類型',
   auto: '自動',
@@ -132,7 +134,7 @@ const zhTW: LANG_MESSAGE = {
   DNSQuery: 'DNS 查詢',
   currentBackendUnavailable: '當前後端不可用，嘗試切換到其他後端?',
   confirm: '確定',
-  backendSwitchTo: '自動切換到{backend}',
+  backendSwitchTo: '已切換後端為{backend}',
 
   // Backend settings
   ipv6Test: 'IPv6 測試',
@@ -219,6 +221,16 @@ const zhTW: LANG_MESSAGE = {
   disablePullToRefresh: '禁用下拉重新整理',
   disablePullToRefreshTip:
     '下拉重新整理和虛擬滾動的組件有時會有衝突，如果你在上下滾動的時候經常卡頓或者誤觸發下拉重新整理，可以嘗試禁用下拉重新整理',
+  keyboardShortcuts: '快捷鍵設定',
+  keyboardShortcutsTip:
+    '點擊輸入框後可直接按單鍵或組合鍵設定快捷鍵，按 Backspace 或 Delete 可清空。',
+  keyboardShortcutPageName: '{name}頁',
+  toggleSidebar: '展開/收起側邊欄',
+  switchToPreviousBackend: '切換到上一個後端',
+  switchToNextBackend: '切換到下一個後端',
+  keyboardShortcutsConflict: '偵測到重複快捷鍵：{keys}。只有第一項會生效。',
+  resetKeyboardShortcuts: '重設快捷鍵',
+  pressAnyKey: '按下任意鍵',
   displayAllFeatures: '顯示所有功能',
   displayAllFeaturesTip:
     '顯示所有功能，包括sing-box官方版本不支援的功能，如果您使用了fork版本的sing-box支援其中的某些功能，可以嘗試啟用',

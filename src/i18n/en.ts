@@ -26,6 +26,7 @@ const en = {
   flushDNSCache: 'Flush DNS cache',
   flushDNSCacheSuccess: 'DNS cache flushed successfully',
   flushFakeIPSuccess: 'Fake IP flushed successfully',
+  flushSmartWeightsSuccess: 'Smart weights flushed successfully',
   restartCoreSuccess: 'Core restarted successfully',
   reloadConfigsSuccess: 'Configs reloaded successfully',
   updateGeoSuccess: 'Geo database updated successfully',
@@ -95,6 +96,7 @@ const en = {
   upgradeToAlpha: 'Upgrade to alpha release',
   updateGeoDatabase: 'Update GEO database',
   truncateProxyName: 'Truncate proxy name',
+  disableProxiesPageTextSelect: 'Disable text selection on proxies page',
   sourceIPLabels: 'Source IP labels',
   proxyPreviewType: 'Proxy preview type',
   auto: 'Auto',
@@ -131,7 +133,7 @@ const en = {
   currentBackendUnavailable:
     'The current backend is unavailable. Would you like to switch to another backend?',
   confirm: 'Confirm',
-  backendSwitchTo: 'Auto switch to {backend}',
+  backendSwitchTo: 'Switched backend to {backend}',
 
   // Backend settings
   ipv6Test: 'IPv6 test',
@@ -223,6 +225,17 @@ const en = {
   disablePullToRefresh: 'Disable pull to refresh',
   disablePullToRefreshTip:
     'Pull-to-refresh and virtual scrolling components may conflict. If you experience lag or accidentally trigger pull-to-refresh while scrolling, try disabling this feature.',
+  keyboardShortcuts: 'Keyboard shortcuts',
+  keyboardShortcutsTip:
+    'Click the input and press a key or key combination to set a shortcut. Press Backspace or Delete to clear it.',
+  keyboardShortcutPageName: '{name} page',
+  toggleSidebar: 'Toggle sidebar',
+  switchToPreviousBackend: 'Switch to previous backend',
+  switchToNextBackend: 'Switch to next backend',
+  keyboardShortcutsConflict:
+    'Duplicate shortcuts detected: {keys}. Only the first one will take effect.',
+  resetKeyboardShortcuts: 'Reset shortcuts',
+  pressAnyKey: 'Press a key',
   displayAllFeatures: 'Show all features',
   displayAllFeaturesTip:
     "Show all features, including those not supported by the official sing-box version. If you're using a forked version of sing-box that supports some of these features, you can try enabling them.",

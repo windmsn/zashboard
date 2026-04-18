@@ -146,6 +146,7 @@ export const scrollAnimationEffect = useStorage('config/scroll-animation-effect'
 export const IPInfoAPI = useStorage('config/geoip-info-api', IP_INFO_API.IPSB)
 export const autoDisconnectIdleUDP = useStorage('config/auto-disconnect-idle-udp', false)
 export const autoDisconnectIdleUDPTime = useStorage('config/auto-disconnect-idle-udp-time', 300)
+export const keyboardShortcuts = useStorage<Record<string, string>>('config/keyboard-shortcuts', {})
 
 // overview
 export const splitOverviewPage = useStorage('config/split-overview-page', false)
@@ -217,6 +218,10 @@ export const proxySortType = useStorage<PROXY_SORT_TYPE>(
 )
 export const automaticDisconnection = useStorage('config/automatic-disconnection', true)
 export const truncateProxyName = useStorage('config/truncate-proxy-name', true)
+export const disableProxiesPageTextSelect = useStorage(
+  'config/disable-proxies-page-text-select',
+  true,
+)
 export const proxyPreviewType = useStorage('config/proxy-preview-type', PROXY_PREVIEW_TYPE.AUTO)
 export const hideUnavailableProxies = useStorage('config/hide-unavailable-proxies', false)
 export const lowLatency = useStorage('config/low-latency', 400)
