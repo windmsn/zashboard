@@ -207,6 +207,10 @@ if (missingCards.length > 0) {
 
 // proxies
 export const collapseGroupMap = useStorage<Record<string, boolean>>('config/collapse-group-map', {})
+export const proxyGroupFilterMap = useStorage<Record<string, string>>(
+  'cache/proxy-group-filter-map',
+  {},
+)
 export const displayFinalOutbound = useStorage('config/show-selected-for-now-node', false)
 export const twoColumnProxyGroup = useStorage('config/two-columns', true)
 export const speedtestUrl = useStorage<string>('config/speedtest-url', TEST_URL)
@@ -328,3 +332,6 @@ export const settingsMenuOrder = useStorage<SETTINGS_MENU_KEY[]>(
   'config/settings-menu-order',
   SETTINGS_CATEGORIES.map((category) => category.key),
 )
+
+// settings page two columns mode
+export const settingsPageTwoColumns = useStorage<boolean>('config/settings-page-two-columns', true)
