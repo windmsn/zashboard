@@ -9,6 +9,7 @@ import {
   proxyMap,
   proxyProviederList,
 } from '@/store/proxies'
+import { groupsInActiveFolder, isProxyFolderModeActive } from '@/store/proxyFolders'
 import { customGlobalNode, displayGlobalByMode, manageHiddenGroup } from '@/store/settings'
 import { isEmpty } from 'lodash'
 import { computed, ref } from 'vue'
@@ -93,5 +94,9 @@ export const renderProxiesPageItems = computed(() => {
     return renderProxyProviders.value
   }
 
-  return renderProxyGroups.value
+  const groups = renderProxyGroups.value
+  if (!isProxyFolderModeActive.value) return groups
+  const filter = groupsInActiveFolder.value
+  if (!filter) return groups
+  return groups.filter((name) => filter.has(name))
 })
