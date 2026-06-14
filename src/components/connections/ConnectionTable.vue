@@ -216,6 +216,7 @@ import {
 import { getConnectionDisplayValue } from '@/helper/connection'
 import { backgroundImage } from '@/helper/indexeddb'
 import { showNotification } from '@/helper/notification'
+import { prettyBytesHelper } from '@/helper/utils'
 import { connectionFilter, connectionTabShow, renderConnections } from '@/store/connections'
 import {
   connectionTableColumns,
@@ -443,8 +444,6 @@ const columns: ColumnDef<Connection>[] = [
     id: CONNECTIONS_TABLE_ACCESSOR_KEY.DlSpeed,
     accessorFn: (original) =>
       getTableDisplayValue(original, CONNECTIONS_TABLE_ACCESSOR_KEY.DlSpeed),
-    cell: highlightedCell(CONNECTIONS_TABLE_ACCESSOR_KEY.DlSpeed),
-    sortingFn: (prev, next) => prev.original.downloadSpeed - next.original.downloadSpeed,
     cell: ({ row }) => {
       const conn = row.original as Connection | undefined
       const value = conn?.downloadSpeed || 0
@@ -452,6 +451,7 @@ const columns: ColumnDef<Connection>[] = [
       const cls = getSpeedColorClass(value, 'dl')
       return h('span', { class: cls }, text)
     },
+    sortingFn: (prev, next) => prev.original.downloadSpeed - next.original.downloadSpeed,
   },
   {
     header: () => t(CONNECTIONS_TABLE_ACCESSOR_KEY.UlSpeed),
@@ -460,8 +460,6 @@ const columns: ColumnDef<Connection>[] = [
     id: CONNECTIONS_TABLE_ACCESSOR_KEY.UlSpeed,
     accessorFn: (original) =>
       getTableDisplayValue(original, CONNECTIONS_TABLE_ACCESSOR_KEY.UlSpeed),
-    cell: highlightedCell(CONNECTIONS_TABLE_ACCESSOR_KEY.UlSpeed),
-    sortingFn: (prev, next) => prev.original.uploadSpeed - next.original.uploadSpeed,
     cell: ({ row }) => {
       const conn = row.original as Connection | undefined
       const value = conn?.uploadSpeed || 0
@@ -469,6 +467,7 @@ const columns: ColumnDef<Connection>[] = [
       const cls = getSpeedColorClass(value, 'ul')
       return h('span', { class: cls }, text)
     },
+    sortingFn: (prev, next) => prev.original.uploadSpeed - next.original.uploadSpeed,
   },
   {
     header: () => t(CONNECTIONS_TABLE_ACCESSOR_KEY.Download),
