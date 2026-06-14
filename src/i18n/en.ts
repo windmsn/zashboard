@@ -210,6 +210,7 @@ const en = {
   showLog: 'Show log',
   hideLogRegex: 'Hide log regex',
   hideLogTip: 'You can use case-insensitive regular expressions to match and hide unwanted logs.',
+  sameConnectionLogs: 'Logs of the same connection',
   loadBalance: 'Load balancing',
   label: 'Label',
   optional: 'Optional',
@@ -249,6 +250,7 @@ const en = {
   toggleSidebar: 'Toggle sidebar',
   switchToPreviousBackend: 'Switch to previous backend',
   switchToNextBackend: 'Switch to next backend',
+  openBackendSettings: 'Open backend settings',
   keyboardShortcutsConflict:
     'Duplicate shortcuts detected: {keys}. Only the first one will take effect.',
   resetKeyboardShortcuts: 'Reset shortcuts',

@@ -213,6 +213,7 @@ const ru: LANG_MESSAGE = {
   hideLogRegex: 'Скрыть журнал Regex',
   hideLogTip:
     'Используйте регистронезависимое регулярное выражение, чтобы найти и скрыть нежелательные записи журнала.',
+  sameConnectionLogs: 'Журналы одного соединения',
   loadBalance: 'Балансировка нагрузки',
   label: 'Метка',
   optional: 'Необязательно',
@@ -251,6 +252,7 @@ const ru: LANG_MESSAGE = {
   toggleSidebar: 'Переключить боковую панель',
   switchToPreviousBackend: 'Переключиться на предыдущий бэкенд',
   switchToNextBackend: 'Переключиться на следующий бэкенд',
+  openBackendSettings: 'Открыть настройки бэкенда',
   keyboardShortcutsConflict:
     'Обнаружены повторяющиеся горячие клавиши: {keys}. Сработает только первое совпадение.',
   resetKeyboardShortcuts: 'Сбросить горячие клавиши',

@@ -2,6 +2,38 @@
 
 # Changelog
 
+## [3.9.0](https://github.com/Zephyruso/zashboard/compare/v3.8.0...v3.9.0) (2026-06-12)
+
+
+### Features
+
+* add blur mask effect to proxies folder top bar when stuck ([e7a4216](https://github.com/Zephyruso/zashboard/commit/e7a421659ee81740a783a1c918f17559a736e2d9)), closes [#675](https://github.com/Zephyruso/zashboard/issues/675)
+* add connection log handling and UI for displaying same connection logs for sing-box ([5b66582](https://github.com/Zephyruso/zashboard/commit/5b665823d996dd55e0f819f66d391738109952df))
+* add transition effects for expandable rule sections in RuleCard component ([f3da572](https://github.com/Zephyruso/zashboard/commit/f3da572881861622b0da63c7b53c0345ba111e62))
+* refactor proxy group components for improved mobile support and UI consistency ([64dace7](https://github.com/Zephyruso/zashboard/commit/64dace79c3866044e991e49c8cf5f685eac27a8d)), closes [#676](https://github.com/Zephyruso/zashboard/issues/676)
+
+
+### Bug Fixes
+
+* adjust width styles for better layout consistency in mobile proxy components ([fa7664f](https://github.com/Zephyruso/zashboard/commit/fa7664fb640800b6a2caeab93faabd8d8d68db10))
+* clear keyboard shortcut instead of resetting to default ([cdae6bf](https://github.com/Zephyruso/zashboard/commit/cdae6bfa68add44319e8a717658e6d536c2799ba)), closes [#673](https://github.com/Zephyruso/zashboard/issues/673)
+
+## [3.8.0](https://github.com/Zephyruso/zashboard/compare/v3.7.1...v3.8.0) (2026-06-07)
+
+
+### Features
+
+* add keyboard shortcut (S) to toggle backend settings dialog ([#671](https://github.com/Zephyruso/zashboard/issues/671)) ([2f79504](https://github.com/Zephyruso/zashboard/commit/2f79504d93dbfebba54832acf073ea8029cb8278))
+* enhance connection and log components with search highlighting functionality ([0f344c3](https://github.com/Zephyruso/zashboard/commit/0f344c327540ea6415df8cea7708b45884f79a7c))
+* show active backend address in title when multiple backends exist ([9ee709e](https://github.com/Zephyruso/zashboard/commit/9ee709e28dd5ae64a06d733ea04deefd48755e09))
+
+
+### Bug Fixes
+
+* adjust layout of connection details by removing unnecessary gaps and adding margin to icons ([7e20100](https://github.com/Zephyruso/zashboard/commit/7e20100352b2bd933a290a673c33531df20d23ea))
+* handle optional properties in IP info retrieval and improve menu handling in TextInput component ([98ba481](https://github.com/Zephyruso/zashboard/commit/98ba4815506af12940099b8d199a2d0eb03a4f77))
+* update menu handling in search input to hide tooltip when no menus remain ([2c029ee](https://github.com/Zephyruso/zashboard/commit/2c029eef090b5981cde74238d4267c933c70d27f))
+
 ## [3.7.1](https://github.com/Zephyruso/zashboard/compare/v3.7.0...v3.7.1) (2026-06-01)
 
 
