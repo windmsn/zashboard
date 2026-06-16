@@ -9,116 +9,121 @@
     <div class="absolute right-4 bottom-4 max-sm:hidden">
       <LanguageSelect />
     </div>
-    <div class="base-container mx-auto flex w-96 max-w-[90%] flex-col gap-3 px-6 py-2 max-sm:my-4">
-      <h1 class="text-2xl font-semibold">{{ $t('setup') }}</h1>
-      <div class="flex flex-col gap-1">
-        <label class="text-sm">
-          <span>{{ $t('protocol') }}</span>
-        </label>
-        <select
-          class="select select-sm w-full"
-          v-model="form.protocol"
-        >
-          <option value="http">HTTP</option>
-          <option value="https">HTTPS</option>
-        </select>
-      </div>
-      <div class="flex flex-col gap-1">
-        <label class="text-sm">
-          <span>{{ $t('host') }}</span>
-        </label>
-        <TextInput
-          class="w-full"
-          name="username"
-          autocomplete="username"
-          v-model="form.host"
-        />
-      </div>
-      <div class="flex flex-col gap-1">
-        <label class="text-sm">
-          <span>{{ $t('port') }}</span>
-        </label>
-        <TextInput
-          class="w-full"
-          v-model="form.port"
-        />
-      </div>
-      <div class="flex flex-col gap-1">
-        <label class="flex items-center gap-1 text-sm">
-          <span>{{ $t('secondaryPath') }} ({{ $t('optional') }})</span>
-          <span
-            class="tooltip"
-            :data-tip="$t('secondaryPathTip')"
+    <div
+      class="border-base-border bg-base-100 mx-auto flex w-96 max-w-[90%] flex-col gap-3 rounded-xl border px-6 py-5 shadow-none max-sm:my-4"
+    >
+      <h1 class="mb-1 text-lg font-medium">{{ $t('setup') }}</h1>
+
+      <div class="flex gap-2">
+        <div class="flex w-24 flex-none flex-col gap-1">
+          <label class="text-sm">{{ $t('protocol') }}</label>
+          <select
+            class="select select-sm w-full"
+            v-model="form.protocol"
           >
-            <QuestionMarkCircleIcon class="h-4 w-4" />
-          </span>
-        </label>
-        <TextInput
-          class="w-full"
-          v-model="form.secondaryPath"
-        />
+            <option value="http">HTTP</option>
+            <option value="https">HTTPS</option>
+          </select>
+        </div>
+        <div class="flex min-w-0 flex-1 flex-col gap-1">
+          <label class="text-sm">{{ $t('host') }}</label>
+          <TextInput
+            class="w-full"
+            name="username"
+            autocomplete="username"
+            v-model="form.host"
+          />
+        </div>
+        <div class="flex w-20 flex-none flex-col gap-1">
+          <label class="text-sm">{{ $t('port') }}</label>
+          <TextInput
+            class="w-full"
+            v-model="form.port"
+          />
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+        <div class="flex min-w-0 flex-1 flex-col gap-1">
+          <label class="flex items-center gap-1 text-sm">
+            <span class="truncate">{{ $t('secondaryPath') }} ({{ $t('optional') }})</span>
+            <span
+              class="tooltip flex-none"
+              :data-tip="$t('secondaryPathTip')"
+            >
+              <QuestionMarkCircleIcon class="h-4 w-4" />
+            </span>
+          </label>
+          <TextInput
+            class="w-full"
+            v-model="form.secondaryPath"
+          />
+        </div>
+        <div class="flex min-w-0 flex-1 flex-col gap-1">
+          <label class="truncate text-sm">{{ $t('label') }}</label>
+          <TextInput
+            class="w-full"
+            v-model="form.label"
+          />
+        </div>
       </div>
       <div class="flex flex-col gap-1">
-        <label class="text-sm">
-          <span>{{ $t('password') }}</span>
-        </label>
+        <label class="text-sm">{{ $t('password') }}</label>
         <input
           type="password"
           class="input input-sm w-full"
           v-model="form.password"
         />
       </div>
-      <div class="flex flex-col gap-1">
-        <label class="text-sm">
-          <span>{{ $t('label') }} ({{ $t('optional') }})</span>
-        </label>
-        <TextInput
-          class="w-full"
-          v-model="form.label"
-        />
-      </div>
+
       <button
         class="btn btn-primary btn-sm w-full"
         @click="handleSubmit(form)"
       >
         {{ $t('submit') }}
       </button>
-      <Draggable
-        class="flex flex-1 flex-col gap-2"
-        v-model="backendList"
-        group="list"
-        :animation="150"
-        :item-key="'uuid'"
-      >
-        <template #item="{ element }">
-          <div
-            :key="element.uuid"
-            class="flex items-center gap-2"
-          >
-            <button class="btn btn-circle btn-ghost btn-sm">
-              <ChevronUpDownIcon class="h-4 w-4 cursor-grab" />
-            </button>
-            <button
-              class="btn btn-sm min-w-0 flex-1"
-              @click="selectBackend(element.uuid)"
+
+      <template v-if="backendList.length">
+        <div class="text-base-content/50 mt-2 text-xs">{{ $t('backend') }}</div>
+        <Draggable
+          class="-mr-2 flex max-h-48 flex-1 flex-col gap-1 overflow-y-auto pr-2"
+          v-model="backendList"
+          group="list"
+          handle=".drag-handle"
+          :animation="150"
+          :item-key="'uuid'"
+        >
+          <template #item="{ element }">
+            <div
+              :key="element.uuid"
+              class="group hover:bg-base-200 flex items-center gap-1 rounded-lg pr-1 transition-colors"
             >
-              <span class="truncate">{{ getLabelFromBackend(element) }}</span>
-            </button>
-            <button
-              class="btn btn-circle btn-ghost btn-sm"
-              @click="editBackend(element)"
-            >
-              <PencilIcon class="h-4 w-4" />
-            </button>
-            <button
-              class="btn btn-circle btn-ghost btn-sm"
-              @click="() => removeBackend(element.uuid)"
-            >
-              <TrashIcon class="h-4 w-4" />
-            </button>
-          </div>
-        </template>
-      </Draggable>
+              <ChevronUpDownIcon
+                class="drag-handle text-base-content/30 ml-1 h-4 w-4 flex-none cursor-grab"
+              />
+              <button
+                class="min-w-0 flex-1 truncate py-1.5 text-left text-sm"
+                @click="selectBackend(element.uuid)"
+              >
+                {{ getLabelFromBackend(element) }}
+              </button>
+              <button
+                class="btn btn-circle btn-ghost btn-xs text-base-content/40 hover:text-base-content opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
+                @click="editBackend(element)"
+              >
+                <PencilIcon class="h-4 w-4" />
+              </button>
+              <button
+                class="btn btn-circle btn-ghost btn-xs text-base-content/40 hover:text-error opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
+                @click="removeBackend(element.uuid)"
+              >
+                <TrashIcon class="h-4 w-4" />
+              </button>
+            </div>
+          </template>
+        </Draggable>
+      </template>
+
       <div class="mt-4 sm:hidden">
         <LanguageSelect />
       </div>
@@ -127,10 +132,14 @@
       </div>
     </div>
 
-    <!-- 编辑Backend Modal -->
     <EditBackendModal
       v-model="showEditModal"
       :default-backend-uuid="editingBackendUuid"
+    />
+
+    <SingboxApiPromptModal
+      v-model="showSingboxPrompt"
+      :backend-uuid="singboxBackendUuid"
     />
   </div>
 </template>
@@ -139,6 +148,7 @@
 import DashboardSettings from '@/components/common/DashboardSettings.vue'
 import TextInput from '@/components/common/TextInput.vue'
 import EditBackendModal from '@/components/settings/backend/EditBackendModal.vue'
+import SingboxApiPromptModal from '@/components/settings/backend/SingboxApiPromptModal.vue'
 import LanguageSelect from '@/components/settings/general/LanguageSelect.vue'
 import { ROUTE_NAME } from '@/constant'
 import { syncSettingsFromCore } from '@/helper/autoImportSettings'
@@ -166,16 +176,16 @@ const form = reactive({
 })
 
 const showEditModal = ref(false)
-const editingBackendUuid = ref<string>('')
+const editingBackendUuid = ref('')
+const showSingboxPrompt = ref(false)
+const singboxBackendUuid = ref('')
 
-// 监听路由参数，自动打开编辑模态框
 watch(
   () => router.currentRoute.value.query.editBackend,
   (backendUuid) => {
     if (backendUuid && typeof backendUuid === 'string') {
       editingBackendUuid.value = backendUuid
       showEditModal.value = true
-      // 清除路由参数以避免重复触发
       router.replace({ query: {} })
     }
   },
@@ -192,11 +202,23 @@ const editBackend = (backend: Backend) => {
   showEditModal.value = true
 }
 
-const handleSubmit = async (form: Omit<Backend, 'uuid'>, quiet = false) => {
-  const { protocol, host, port, password } = form
+type ClashSetupForm = Omit<Backend, 'uuid' | 'singboxChannel'>
+
+const finishLogin = async () => {
+  try {
+    const synced = await syncSettingsFromCore()
+    if (synced) return
+  } catch (error) {
+    console.error('Failed to sync settings after login:', error)
+  }
+  router.push({ name: ROUTE_NAME.proxies })
+}
+
+const handleSubmit = async (setupForm: ClashSetupForm, quiet = false) => {
+  const { protocol, host, port, password } = setupForm
 
   if (!protocol || !host || !port) {
-    alert('Please fill in all the fields.')
+    if (!quiet) alert('Please fill in all the fields.')
     return
   }
 
@@ -206,46 +228,38 @@ const handleSubmit = async (form: Omit<Backend, 'uuid'>, quiet = false) => {
     !['::1', '0.0.0.0', '127.0.0.1', 'localhost'].includes(host) &&
     !quiet
   ) {
-    showNotification({
-      content: 'protocolTips',
-    })
+    showNotification({ content: 'protocolTips' })
   }
 
   try {
-    const data = await fetch(`${getUrlFromBackend(form)}/version`, {
+    const response = await fetch(`${getUrlFromBackend(setupForm)}/version`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${password}`,
       },
     })
 
-    if (data.status !== 200) {
-      if (!quiet) {
-        alert(data.statusText)
-      }
+    if (!response.ok) {
+      if (!quiet) alert(response.statusText)
       return
     }
 
-    const { version, message } = await data.json()
-
+    const { version, message } = await response.json()
     if (!version) {
-      if (!quiet) {
-        alert(message)
-      }
+      if (!quiet) alert(message)
       return
     }
 
-    addBackend(form)
-    const synced = await syncSettingsFromCore()
-    if (synced) {
+    addBackend(setupForm)
+    if (__SINGBOX_NATIVE__ && String(version).includes('sing-box')) {
+      singboxBackendUuid.value = activeUuid.value
+      showSingboxPrompt.value = true
       return
     }
 
-    router.push({ name: ROUTE_NAME.proxies })
-  } catch (e) {
-    if (!quiet) {
-      alert(e)
-    }
+    await finishLogin()
+  } catch (error) {
+    if (!quiet) alert(error)
   }
 }
 
